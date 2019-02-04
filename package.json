@@ -1,0 +1,26 @@
+{
+  "name": "mediarithmics",
+  "version": "1.0.0",
+  "description": "Il s'agit d'un \"château\" API :",
+  "main": "main.js",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "request-promise": "^4.2.2",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geoffroybag/mediarithmics-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geoffroybag/mediarithmics-test/issues"
+  },
+  "homepage": "https://github.com/geoffroybag/mediarithmics-test#readme"
+}
