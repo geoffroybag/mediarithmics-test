@@ -1,52 +1,71 @@
-const axios = require("axios")
+const http = require('http')
+const rp = require('request-promise')
+const myAgent = new http.Agent()
+myAgent.maxSockets = Infinity
+
+
 const rootUrl = "http://castles.poulpi.fr"
-const entry = "http://castles.poulpi.fr/castles/1/rooms/entry"
 let chestsFound = []
+const roomsChecked = new Set();
+
 
 // entry point
 async function enterCastle () {
     try {
-        let {data} = await fetch(entry);
-        const res = checkRoom(data)
+        await checkRoom("/castles/1/rooms/entry")
+        console.log(chestsFound)
     } catch(err) {
-            console.error(err.message);
+        console.log(err.message);
     }
+}
+
+async function enterRoom(oneRoom){
+    if(!roomsChecked.has(oneRoom)){
+        roomsChecked.add(oneRoom)
+        const res = await loadRoomInfo(oneRoom)
+        return res
+    }
+}
+
+async function loadRoomInfo(oneRoom){
+    try {
+        let response = await rp({ url: rootUrl + oneRoom, agent: myAgent, json: true})
+        return response;
+      }catch(e){
+        // console.error(e.message)
+      }
 }
 
 // recursive function to check all Rooms in castle
 async function checkRoom (oneRoom) {
+
     try{
-        oneRoom.chests.forEach(async function findChest(oneChest){
-            try{
-                const {data} = await fetch(rootUrl+oneChest)
-                if(data.status !== "This chest is empty :/ Try another one!"){
-                    chestsFound.push(data.id)
-                }
-            }
-            catch(err){
-                console.error(err.message);
-            }
-        })
-        
-        if(oneRoom.rooms.length>0){
-            oneRoom.rooms.forEach(async function (oneAdjacentRoom) {
-                try {
-                    let {data} = await fetch(rootUrl + oneAdjacentRoom);
-                    checkRoom(data);
-                } catch(err) {
-                    console.error(err.message);
-                }
-            });
+        const data = await enterRoom(oneRoom)
+        if(data){
+            console.log(data)
+            await Promise.all(data.chests.map(oneChest => checkChest(oneChest)));
+            await Promise.all(data.rooms.map(oneRoom => checkRoom(oneRoom)));
         }
 
     }
     catch(err){
-        console.error(err.message)
+        // console.log(err.message)
     }
 }
 
+async function checkChest(oneChest){
+    try{
+        const response = await rp({ url: rootUrl + oneChest, agent: myAgent, json: true })
+        if(response.status !== "This chest is empty :/ Try another one!"){
+            chestsFound.push(response.id)
+        }
+    }
+    catch(err){
+        // console.log(err.message);
+    }
+}
 
-enterCastle().then(() => console.log(chestsFound))
+enterCastle()
 
 
 
