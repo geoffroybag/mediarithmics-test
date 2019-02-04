@@ -11,3 +11,6 @@ Le but de l'exercice est de trouver tous les coffres qui sont pleins (de les com
 
 Voici le lien vers l'entrée du château : (GET) http://castles.poulpi.fr/castles/1/rooms/entry
 Voici un exemple de coffre (vide comme le montre le statut) : (GET) http://castles.poulpi.fr/castles/1/chests/736d0e26-9024-4e93-81b3-f0ae5c3cac52
+
+
+>>Use node --max-old-space-size=4096 main.js to start<<
